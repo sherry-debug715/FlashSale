@@ -1,5 +1,7 @@
 package com.flashsell.flashsell.db.mappers;
 
+import java.util.List;
+
 import com.flashsell.flashsell.db.po.SeckillActivity;
 
 public interface SeckillActivityMapper {
@@ -14,4 +16,6 @@ public interface SeckillActivityMapper {
     int updateByPrimaryKeySelective(SeckillActivity record);
 
     int updateByPrimaryKey(SeckillActivity record);
+
+    List<SeckillActivity> querySeckillActivitysByStatus(int activityStatus);
 }

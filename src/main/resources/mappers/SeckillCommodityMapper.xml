@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jiuzhang.seckill.db.mappers.SeckillCommodityMapper">
+<mapper namespace="com.flashsell.flashsell.db.mappers.SeckillCommodityMapper">
   <resultMap id="BaseResultMap" type="com.flashsell.flashsell.db.po.SeckillCommodity">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="commodity_name" jdbcType="VARCHAR" property="commodityName" />

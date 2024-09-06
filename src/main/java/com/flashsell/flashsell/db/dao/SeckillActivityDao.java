@@ -2,12 +2,15 @@ package com.flashsell.flashsell.db.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.flashsell.flashsell.db.po.SeckillActivity;
 
+@Mapper
 public interface SeckillActivityDao {
     public List<SeckillActivity> querySeckillActivitysByStatus(int activityStatus);
 
-    public void inertSeckillActivity(SeckillActivity seckillActivity);
+    public void insertSeckillActivity(SeckillActivity seckillActivity);
 
     public SeckillActivity querySeckillActivityById(long activityId);
 
