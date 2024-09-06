@@ -59,23 +59,23 @@ public class SeckillActivityController {
             @RequestParam("endTime") String endTime,
             Map<String, Object> resultMap) throws ParseException {
         
-        startTime = startTime.substring(0, 10) + startTime.substring(11);
-        endTime = endTime.substring(0, 10) + endTime.substring(11);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddhh:mm");
-        SeckillActivity seckillActivity = new SeckillActivity();
-        seckillActivity.setName(name);
-        seckillActivity.setCommodityId(commodityId);
-        seckillActivity.setSeckillPrice(seckillPrice);
-        seckillActivity.setOldPrice(oldPrice);
-        seckillActivity.setTotalStock(seckillNumber);
-        seckillActivity.setAvailableStock((int) seckillNumber); // Corrected Integer construction
-        seckillActivity.setLockStock(0L);
-        seckillActivity.setActivityStatus(1);
-        seckillActivity.setStartTime(format.parse(startTime));
-        seckillActivity.setEndTime(format.parse(endTime));
-        seckillActivityDao.insertSeckillActivity(seckillActivity);
-        resultMap.put("seckillActivity", seckillActivity);
-        return "add_success"; // returns the view "add_success"
+            startTime = startTime.substring(0, 10) + startTime.substring(11);
+            endTime = endTime.substring(0, 10) + endTime.substring(11);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddhh:mm");
+            SeckillActivity seckillActivity = new SeckillActivity();
+            seckillActivity.setName(name);
+            seckillActivity.setCommodityId(commodityId);
+            seckillActivity.setSeckillPrice(seckillPrice);
+            seckillActivity.setOldPrice(oldPrice);
+            seckillActivity.setTotalStock(seckillNumber);
+            seckillActivity.setAvailableStock((int) seckillNumber); // Corrected Integer construction
+            seckillActivity.setLockStock(0L);
+            seckillActivity.setActivityStatus(1);
+            seckillActivity.setStartTime(format.parse(startTime));
+            seckillActivity.setEndTime(format.parse(endTime));
+            seckillActivityDao.insertSeckillActivity(seckillActivity);
+            resultMap.put("seckillActivity", seckillActivity);
+            return "add_success"; // returns the view "add_success"
     }
 
     @RequestMapping("/addSeckillActivity")
