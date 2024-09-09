@@ -59,6 +59,20 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+    <update id="updateByPrimaryKey" parameterType="com.flashsell.flashsell.db.po.SeckillActivity">
+        UPDATE seckill_activity
+        SET name = #{name,jdbcType=VARCHAR},
+            commodity_id = #{commodityId,jdbcType=BIGINT},
+            old_price = #{oldPrice,jdbcType=DECIMAL},
+            seckill_price = #{seckillPrice,jdbcType=DECIMAL},
+            activity_status = #{activityStatus,jdbcType=INTEGER},
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            end_time = #{endTime,jdbcType=TIMESTAMP},
+            total_stock = #{totalStock,jdbcType=BIGINT},
+            available_stock = #{availableStock,jdbcType=INTEGER},
+            lock_stock = #{lockStock,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
 
     <select id="querySeckillActivitysByStatus" parameterType="int" resultMap="BaseResultMap">
         select
