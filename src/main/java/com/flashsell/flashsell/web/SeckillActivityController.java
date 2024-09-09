@@ -1,4 +1,4 @@
-package com.flashsell.flashsell.controller;
+package com.flashsell.flashsell.web;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
