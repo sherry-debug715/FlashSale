@@ -14,7 +14,9 @@ public class GeneratorSqlmap {
         List<String> warnings = new ArrayList<String>();
         boolean overwrite = true;
         //指定逆向工程配置文件
-        File configFile = new File("src/main/resources/generatorConfig.xml");
+        String realpath = System.getProperty("user.dir");
+        String path = GeneratorSqlmap.class.getClassLoader().getResource("generatorConfig.xml").getPath();
+        File configFile = new File("/Users/sherryyu/FlashSellSystem/flashsellSystem/flashsell/src/main/resources/generatorConfig.xml");
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(configFile);
         DefaultShellCallback callback = new DefaultShellCallback(overwrite);
@@ -32,4 +34,5 @@ public class GeneratorSqlmap {
 
     }
 }
+
 

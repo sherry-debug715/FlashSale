@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>成功</h1>
+    <tr th:each="seckillActivity : ${seckillActivities}">
+    <div th:text="${seckillActivity.id}"/>
+    <div th:text="${seckillActivity.name}"/>
+    <div th:text="${seckillActivity.seckillPrice}"/>
+    </tr>
+    <div>商品ID </div>
+    <div th:text="${commodityId}"/>
+</body>
+</html>
