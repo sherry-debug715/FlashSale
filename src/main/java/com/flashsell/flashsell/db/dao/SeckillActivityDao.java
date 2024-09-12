@@ -19,4 +19,6 @@ public interface SeckillActivityDao {
     public boolean deductStock(long activityId);
 
     public boolean lockStock(long activityId);
+
+    void revertStock(Long seckillActivityId);
 }

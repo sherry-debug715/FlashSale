@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import com.flashsell.flashsell.db.po.Order;
 import com.flashsell.flashsell.db.po.SeckillActivity;
 import com.flashsell.flashsell.db.po.SeckillCommodity;
 import com.flashsell.flashsell.services.SeckillActivityService;
+import com.flashsell.flashsell.util.RedisService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +43,9 @@ public class SeckillActivityController {
 
     @Autowired
     OrderDao orderDao;
+
+    @Resource
+    private RedisService redisService;
 
     @RequestMapping("/seckills")
     public String activityList(Map<String, Object> resultMap) {
@@ -113,12 +119,19 @@ public class SeckillActivityController {
         /*
         * Make sure flash sale can be processed 
         */
+        if (redisService.isInLimitMember(seckillActivityId, userId)) {
+            // notify user there is a limit buy 
+            modelAndView.addObject("resultInfo", "Sorry, you have already purchased the product."); modelAndView.setViewName("seckill_result");
+            return modelAndView;
+        }
         stockValidateResult = seckillActivityService.seckillStockValidator(seckillActivityId);
         if (stockValidateResult) {
             Order order = seckillActivityService.createOrder(seckillActivityId, userId);
             modelAndView.addObject("resultInfo","Flash sale successful, order is being created, Order ID: "
             + order.getOrderNo());
             modelAndView.addObject("orderNo",order.getOrderNo());
+            // add user into buyers list in redis  
+            redisService.addLimitMember(seckillActivityId, userId);
         } else {
             modelAndView.addObject("resultInfo","Sorry, the selected product is out of stock");
         }
@@ -149,8 +162,8 @@ public class SeckillActivityController {
             SeckillActivity seckillActivity = seckillActivityDao.querySeckillActivityById(order.getSeckillActivityId());
             modelAndView.addObject("seckillActivity", seckillActivity);
         } else {
-            log.info("Order not found, redirecting to order_wait page.");
-            modelAndView.setViewName("order_wait");
+            log.info("Order not found, redirecting to wait template.");
+            modelAndView.setViewName("wait");
         }
         return modelAndView;
     }
@@ -160,7 +173,7 @@ public class SeckillActivityController {
      * @return
      */
     @RequestMapping("/seckill/payOrder/{orderNo}")
-    public String payOrder(@PathVariable String orderNo){
+    public String payOrder(@PathVariable String orderNo) throws Exception{
         seckillActivityService.payOrderProcess(orderNo);
         return "redirect:/seckill/orderQuery/" + orderNo;
     }
