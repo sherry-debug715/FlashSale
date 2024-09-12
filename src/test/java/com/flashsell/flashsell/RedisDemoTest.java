@@ -3,8 +3,11 @@ package com.flashsell.flashsell;
 import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.flashsell.flashsell.db.mappers.SeckillActivityMapper;
+import com.flashsell.flashsell.services.SeckillActivityService;
 import com.flashsell.flashsell.util.RedisService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 public class RedisDemoTest {
     @Resource
     private RedisService redisService;
+
+    @Autowired
+    SeckillActivityService seckillActivityService;
 
     @Test
     public void stockTest() {
@@ -46,6 +52,11 @@ public class RedisDemoTest {
 
         stock = redisService.getValue("stock:19");
         System.out.println("回滚库存之后的库存：" + stock);
+    }
+
+    @Test
+    public void pushSeckillInfoToRedisTest() {
+        seckillActivityService.pushSeckillInfoToRedis(19);
     }
 
 }
