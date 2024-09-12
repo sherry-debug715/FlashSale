@@ -93,7 +93,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <select id="querySeckillActivitysByStatus" parameterType="int" resultMap="BaseResultMap">
+    <select id="querySeckillActivitysByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from seckill_activity

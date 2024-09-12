@@ -59,4 +59,9 @@ public class RedisDemoTest {
         seckillActivityService.pushSeckillInfoToRedis(19);
     }
 
+    @Test
+    public void removeLimitMemberTest() {
+        redisService.removeLimitMember(19L, 1234L);
+    }
+
 }
