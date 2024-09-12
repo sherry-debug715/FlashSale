@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.flashsell.flashsell.db.dao.OrderDao;
 import com.flashsell.flashsell.db.dao.SeckillActivityDao;
 import com.flashsell.flashsell.db.dao.SeckillCommodityDao;
@@ -23,6 +25,7 @@ import com.flashsell.flashsell.db.po.SeckillActivity;
 import com.flashsell.flashsell.db.po.SeckillCommodity;
 import com.flashsell.flashsell.services.SeckillActivityService;
 import com.flashsell.flashsell.util.RedisService;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,9 +59,28 @@ public class SeckillActivityController {
 
     @RequestMapping("/item/{seckillActivityId}")
     public String itemPage(Map<String, Object> resultMap, @PathVariable long seckillActivityId) {
-        SeckillActivity seckillActivity = seckillActivityDao.querySeckillActivityById(seckillActivityId);
-        SeckillCommodity seckillCommodity = seckillCommodityDao.querySeckillCommodityById(seckillActivity.getCommodityId());
+        SeckillActivity seckillActivity;
+        SeckillCommodity seckillCommodity;
+        
+        // get seckill activity from redis cache, if not stored in redis then fetch from mysql
+        String seckillActivityInfo = redisService.getValue("seckillActivity:" +
+        seckillActivityId);
+        if (StringUtils.isNotEmpty(seckillActivityInfo)) { 
+            log.info("redis cache seckillActivityInfo data: " + seckillActivityInfo); 
+            seckillActivity = JSON.parseObject(seckillActivityInfo, SeckillActivity.class);
+        } else {
+            seckillActivity = seckillActivityDao.querySeckillActivityById(seckillActivityId);
+        }
 
+        // get commodity information from redis by commodity id, if not stored in redis, fetch from mysql.
+        String seckillCommodityInfo = redisService.getValue("seckillCommodity:"
+        + seckillActivity.getCommodityId());
+        if (StringUtils.isNotEmpty(seckillCommodityInfo)) { 
+            log.info("redis cache seckillCommodityInfo data: " + seckillCommodityInfo); seckillCommodity = JSON.parseObject(seckillActivityInfo, SeckillCommodity.class);
+        } else {
+            seckillCommodity = seckillCommodityDao.querySeckillCommodityById(seckillActivity.getCommodityId());
+        }
+        
         resultMap.put("seckillActivity", seckillActivity);
         resultMap.put("seckillCommodity", seckillCommodity);
         resultMap.put("seckillPrice", seckillActivity.getSeckillPrice());
@@ -66,7 +88,7 @@ public class SeckillActivityController {
         resultMap.put("commodityId", seckillActivity.getCommodityId());
         resultMap.put("commodityName", seckillCommodity.getCommodityName());
         resultMap.put("commodityDesc", seckillCommodity.getCommodityDesc());
-        return "seckill_item"; // returns the view "seckill_item"
+        return "seckill_item";
     }
 
     @RequestMapping("/addSeckillActivityAction")

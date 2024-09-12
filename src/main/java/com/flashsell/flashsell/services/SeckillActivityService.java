@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.flashsell.flashsell.db.dao.OrderDao;
 import com.flashsell.flashsell.db.dao.SeckillActivityDao;
+import com.flashsell.flashsell.db.dao.SeckillCommodityDao;
 import com.flashsell.flashsell.db.po.Order;
 import com.flashsell.flashsell.db.po.SeckillActivity;
+import com.flashsell.flashsell.db.po.SeckillCommodity;
 import com.flashsell.flashsell.mq.RocketMQService;
 import com.flashsell.flashsell.util.RedisService;
 import com.flashsell.flashsell.util.SnowFlake;
@@ -24,6 +26,9 @@ public class SeckillActivityService {
 
     @Autowired
     private SeckillActivityDao seckillActivityDao;
+
+    @Autowired
+    private SeckillCommodityDao seckillCommodityDao;
 
     @Autowired
     private RocketMQService rocketMQService;
@@ -77,6 +82,18 @@ public class SeckillActivityService {
     public boolean seckillStockValidator(long activityId) {
         String key = "stock:" + activityId;
         return redisService.stockDeductValidator(key);
+    }
+
+    /**
+    * add seckill activity objects into redis
+    * @param seckillActivityId 
+    */
+    public void pushSeckillInfoToRedis(long seckillActivityId) {
+        SeckillActivity seckillActivity = seckillActivityDao.querySeckillActivityById(seckillActivityId);
+
+        redisService.setValue("seckillActivity:" + seckillActivityId, JSON.toJSONString(seckillActivity));
+        SeckillCommodity seckillCommodity = seckillCommodityDao.querySeckillCommodityById(seckillActivity.getCommodityId());
+        redisService.setValue("seckillCommodity:" + seckillActivity.getCommodityId(), JSON.toJSONString(seckillCommodity));
     }
 
     /*
