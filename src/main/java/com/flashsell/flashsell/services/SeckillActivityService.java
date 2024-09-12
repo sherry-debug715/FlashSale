@@ -117,6 +117,7 @@ public class SeckillActivityService {
         * 2.Order paid */
         order.setPayTime(new Date());
         // Order status: 0: Out of stock, invalid order; 1: order created, waiting for payment; 2: Payment completed.
+        order.setOrderStatus(2);
         orderDao.updateOrder(order);
         /*
         *3.Send order payment completed message

@@ -122,6 +122,7 @@ public class RedisService {
     public void removeLimitMember(long activityId, long userId) {
         Jedis jedisClient = jedisPool.getResource();
         jedisClient.srem("seckillActivity_users:" + activityId, String.valueOf(userId));
+        log.info("userId:{} activityId:{} removed from the list of buyers", userId, activityId);
         jedisClient.close();
     }
 }
