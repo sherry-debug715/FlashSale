@@ -125,4 +125,44 @@ public class RedisService {
         log.info("userId:{} activityId:{} removed from the list of buyers", userId, activityId);
         jedisClient.close();
     }
+
+    /**
+    * get distributed lock
+    * @param lockKey
+    * @param requestId * @param expireTime * @return
+    */
+    public  boolean tryGetDistributedLock(String lockKey, String requestId, int
+expireTime) {
+        Jedis jedisClient = jedisPool.getResource();
+        /*
+         * two options for nxxx:
+         * "NX": not exists, only when key doesn't exist will key value set to redis.
+         * "XX": is exists, only when key exist, sest key value to redis
+         * two options for "expx":
+         * "EX": seconds 
+         * "PX": milliseconds
+         */
+        String result = jedisClient.set(lockKey, requestId, "NX","PX",expireTime);
+        jedisClient.close();
+        if ("OK".equals(result)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+    * Unlock the lockKey *
+    * @param lockKey 
+    * @param requestId request id
+    * @return boolean: if unlock is successful */
+    public boolean releaseDistributedLock(String lockKey, String requestId) {
+        Jedis jedisClient = jedisPool.getResource();
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        Long result = (Long) jedisClient.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
+        jedisClient.close();
+        if (result == 1L) {
+            return true;
+        }
+        return false;
+    }
 }
