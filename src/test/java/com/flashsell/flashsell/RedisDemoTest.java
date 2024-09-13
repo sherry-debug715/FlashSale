@@ -1,7 +1,7 @@
 package com.flashsell.flashsell;
 
 import javax.annotation.Resource;
-
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,6 +62,32 @@ public class RedisDemoTest {
     @Test
     public void removeLimitMemberTest() {
         redisService.removeLimitMember(19L, 1234L);
+    }
+
+    /**
+    * get lock key under high concurrency
+    */
+    @Test
+    public void  testConcurrentAddLock() {
+        for (int i = 0; i < 10; i++) {
+            String requestId = UUID.randomUUID().toString();
+            // Log result: true false false false false false false false false false 
+            // only the first request can get the key
+            System.out.println(redisService.tryGetDistributedLock("A", requestId,1000));
+        }
+    }
+
+    /** 
+    * Under high concurrency, unlock as soon as a key is locked
+    */
+    @Test
+    public void  testConcurrent() {
+        for (int i = 0; i < 10; i++) {
+            String requestId = UUID.randomUUID().toString();
+            // log result: true true true true true true true true true true 
+            System.out.println(redisService.tryGetDistributedLock("A", requestId,1000));
+            redisService.releaseDistributedLock("A", requestId);
+        } 
     }
 
 }
