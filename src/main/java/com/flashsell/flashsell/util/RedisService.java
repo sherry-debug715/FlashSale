@@ -68,6 +68,7 @@ public class RedisService {
 
             if (stock < 0) {
                 System.out.println("Out of stock");
+                return false;
             } else {
                 System.out.println("Congratulations, the flash sale was successful.");
             }
